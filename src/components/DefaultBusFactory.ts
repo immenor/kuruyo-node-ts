@@ -1,17 +1,11 @@
 import cheerioModule = require('cheerio')
-
-export class Stop {
-  name: string
-  constructor(name: string) {
-        this.name = name;
-    }
-}
+import { Stop } from "../components/stop"
 
 export interface BusFactory {
   getStops(html: CheerioSelector): Stop[]
 }
 
-export class DefaultBusFactory {
+export class DefaultBusFactory implements BusFactory {
   getStops(html: CheerioSelector): Stop[] {
     let stopNames: Stop[] = []
     html(".routeListTbl tr")
