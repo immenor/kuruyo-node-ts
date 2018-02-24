@@ -2,7 +2,7 @@ import { TokyuBusHTMLRepository } from "../src/components/TokyuBusHTMLRepository
 import { expect } from 'chai'
 import 'mocha'
 
-describe('Hello function', () => {
+describe('Tokyu Bus HTML Repository', () => {
   const repo = new TokyuBusHTMLRepository()
 
   it('should return a html from the tokyu bus page', () => {
