@@ -1,0 +1,26 @@
+{
+  "name": "kuruyo-server",
+  "version": "0.0.1",
+  "author": "Immenor",
+  "dependencies": {
+    "@types/cheerio": "^0.22.7",
+    "@types/node": "^9.4.5",
+    "@types/request-promise": "^4.1.41",
+    "apn": "^2.2.0",
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "typescript": "^2.7.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^2.2.48",
+    "chai": "^4.1.2",
+    "mocha": "^5.0.1",
+    "ts-node": "^5.0.0"
+  },
+  "scripts": {
+    "server": "node src/main.js",
+    "test": "mocha ./tests/*.spec.js"
+  }
+}
