@@ -1,4 +1,4 @@
-import { DefaultBusLocationFactory } from "../components/DefaultBusLocationFactory"
+import { DefaultBusLocationFactory } from "../src/components/DefaultBusLocationFactory"
 import { TokyuHTMLFixture } from "./TokyuHTMLFixture"
 import { expect } from 'chai'
 import 'mocha'

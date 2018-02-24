@@ -1,4 +1,4 @@
-import { TokyuBusHTMLRepository } from "../components/TokyuBusHTMLRepository";
+import { TokyuBusHTMLRepository } from "../src/components/TokyuBusHTMLRepository";
 import { expect } from 'chai'
 import 'mocha'
 
