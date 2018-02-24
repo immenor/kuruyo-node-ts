@@ -20,7 +20,7 @@
     "ts-node": "^5.0.0"
   },
   "scripts": {
-    "server": "node src/main.js",
-    "test": "mocha ./tests/*.spec.js"
+    "server": "node dist/main.js",
+    "test": "mocha ./dist/tests/*.spec.js"
   }
 }
