@@ -41,4 +41,5 @@ router.post('/target-bus-stop', function (req: express.Request, res: express.Res
 // Start Server
 
 app.use('/api', router)
+module.exports = app
 app.listen(3000, () => console.log('Kuruyo Server listening on port 3000!'))
