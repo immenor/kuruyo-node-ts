@@ -32,6 +32,24 @@ describe('Main Express Server', () => {
         expect(res.body).to.have.property('busLocations')
       done()
     })
+  })
 
+  it('should recieve a post with a deviceToken', (done) => {
+
+    let body = {
+        "targetStop": "守屋図書館",
+        "stopsAway": 3,
+        "deviceToken": "123456789"
+    }
+
+    chai.request(app)
+      .post('/api/request-notification')
+      .send(body)
+      .end((err, res) => {
+        expect(res).to.have.status(200)
+        expect(res.body).to.have.property('targetStop')
+        expect(res.body).to.have.property('stopsAway')
+        expect(res.body).to.have.property('deviceToken')
+    })
   })
 })

@@ -3,3 +3,5 @@ node_modules/
 # Ignores compiled TypeScript files
 **/*.js
 **/*.map
+apn-config.ts
+*.p8
