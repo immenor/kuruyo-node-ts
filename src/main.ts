@@ -46,6 +46,8 @@ router.post('/request-notification', function (req: express.Request, res: expres
 
   let sender = new IOSNotificationSender()
 
+  // For Now + 30 min, Try to find a bus three stops away
+
   sender.sendNotification(deviceToken, function() {
     res.send("done!")
   })

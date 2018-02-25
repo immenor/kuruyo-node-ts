@@ -1,12 +1,6 @@
 import cheerioModule = require('cheerio')
-import { Stop } from "../components/stop"
-
-export class BusLocation {
-  stop: Stop
-  constructor(stop: Stop) {
-        this.stop = stop;
-    }
-}
+import { Stop } from "../components/Stop"
+import { BusLocation } from "../components/BusLocation"
 
 export interface BusLocationFactory {
   getLeftBusLocations(html: CheerioSelector): BusLocation[]

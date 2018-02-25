@@ -1,5 +1,5 @@
 import cheerioModule = require('cheerio')
-import { Stop } from "../components/stop"
+import { Stop } from "../components/Stop"
 
 export interface BusFactory {
   getStops(html: CheerioSelector): Stop[]
@@ -26,6 +26,6 @@ export class DefaultBusFactory implements BusFactory {
       return stop.name == fromStop
     })
 
-    return stops[i + 3]
+    return stops[i + numberOfStops]
   }
 }
