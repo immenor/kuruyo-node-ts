@@ -7,6 +7,8 @@ import { getHTML } from "./components/TokyuBusHTMLRepository"
 import { getLeftBusLocations } from "./components/DefaultBusLocationFactory"
 import { getStops, findStopByScanningDownFromStop } from "./components/DefaultBusFactory"
 import { sendNotification } from "./components/IOSNotificationSender"
+import { checkIfBusIsAtStop, keepCheckingBusLocation } from "./components/TokyuBusLocationChecker"
+import { Stop } from "./components/stop"
 
 // Setup Express
 
@@ -42,11 +44,10 @@ router.post('/request-notification', function (req: express.Request, res: expres
   let stopsAway = req.body["stopAway"]
   let deviceToken = req.body["deviceToken"]
 
-
-  // For Now + 30 min, Try to find a bus three stops away
-
-  sendNotification(deviceToken, function() {
-    res.sendStatus(200)
+  keepCheckingBusLocation(targetStop, 3000, () => {
+    sendNotification(deviceToken, function() {
+      res.sendStatus(200)
+    })
   })
 })
 

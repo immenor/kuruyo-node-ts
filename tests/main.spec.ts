@@ -7,6 +7,7 @@ const expect = chai.expect
 
 import * as IOSNotificationSender from "../src/components/IOSNotificationSender"
 import * as TokyuBusHTMLRepository from "../src/components/TokyuBusHTMLRepository"
+import * as TokyuBusLocationChecker from "../src/components/TokyuBusLocationChecker"
 import { fakeHtml } from "./TokyuHTMLFixture"
 import { Promise } from 'es6-promise'
 
@@ -14,6 +15,7 @@ describe('Main Express Server', () => {
 
   let fakeHtmlRepo
   let fakeSender
+  let fakeLocationChecker
 
   before(function() {
     const promise = new Promise((resolve,reject) => {
@@ -23,11 +25,16 @@ describe('Main Express Server', () => {
     fakeSender = sinon.stub(IOSNotificationSender, 'sendNotification').callsFake(function(token, completion) {
       completion()
     })
+    fakeLocationChecker = sinon.stub(TokyuBusLocationChecker, 'keepCheckingBusLocation')
+    .callsFake(function(stop, time, completion){
+      completion()
+    })
   })
 
   after(function() {
     fakeHtmlRepo.restore()
     fakeSender.restore()
+    fakeLocationChecker.restore()
   })
 
   it('should respond to a get for all left busses', (done) => {

@@ -1,5 +1,7 @@
 import{ Stop } from "./Stop"
-import{ BusLocation } from "./BusLocation"
+import { BusLocation } from "./BusLocation"
+import { getHTML } from "./TokyuBusHTMLRepository"
+import { getLeftBusLocations } from "./DefaultBusLocationFactory"
 
 export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):boolean {
     let foundMatch = false
@@ -9,4 +11,18 @@ export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):bo
       }
     })
     return foundMatch
+}
+
+export function keepCheckingBusLocation(stop: Stop, waitTime: number, completion: {():void}) {
+
+  getHTML().then(function (html) {
+    let locations = getLeftBusLocations(html)
+    if (!checkIfBusIsAtStop(stop, locations)) {
+      setTimeout(function(){
+        keepCheckingBusLocation(stop, waitTime, completion)
+      }, waitTime)
+    } else {
+      completion()
+    }
+  })
 }
