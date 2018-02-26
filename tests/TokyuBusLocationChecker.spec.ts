@@ -33,7 +33,7 @@ describe('Tokyu Bus Location Checker', () => {
     fakeLocationFactory.restore()
   })
 
-  it('should return a html from the tokyu bus page', () => {
+  it('should check if a bus is at the stop', () => {
 
     let stop = new Stop("2")
     let locations = [
@@ -42,8 +42,8 @@ describe('Tokyu Bus Location Checker', () => {
       new BusLocation(new Stop("6"))
     ]
 
-    let isThreeStopsAway = TokyuBusLocationChecker.checkIfBusIsAtStop(stop, locations)
-    expect(isThreeStopsAway).to.equal(true)
+    let busIsAtStop = TokyuBusLocationChecker.checkIfBusIsAtStop(stop, locations)
+    expect(busIsAtStop).to.equal(true)
 
   })
 
