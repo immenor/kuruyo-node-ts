@@ -1,12 +1,7 @@
 import cheerioModule = require('cheerio')
 import { Stop } from "../components/Stop"
 
-export interface BusFactory {
-  getStops(html: CheerioSelector): Stop[]
-}
-
-export class DefaultBusFactory implements BusFactory {
-  getStops(html: CheerioSelector): Stop[] {
+export function getStops(html: CheerioSelector): Stop[] {
     let stopNames: Stop[] = []
     html(".routeListTbl tr")
       .each(function( index: any ) {
@@ -17,9 +12,9 @@ export class DefaultBusFactory implements BusFactory {
         }
       })
     return stopNames
-  }
+}
 
-  findStopByScanningDownFromStop(numberOfStops: number, fromStop: string, html: CheerioSelector):Stop {
+export function findStopByScanningDownFromStop(numberOfStops: number, fromStop: string, html: CheerioSelector):Stop {
     let stops = this.getStops(html)
 
     let i = stops.findIndex(function (stop: Stop) {
@@ -27,5 +22,4 @@ export class DefaultBusFactory implements BusFactory {
     })
 
     return stops[i + numberOfStops]
-  }
 }

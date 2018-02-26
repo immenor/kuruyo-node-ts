@@ -1,19 +1,13 @@
 import apn = require('apn')
 import { APNCONFIG } from "../../apn-config"
 
-export interface NotificationSender {
-  sendNotification( deviceToken: string, completion: {(): void} ):void
-}
-
-export class IOSNotificationSender implements NotificationSender {
-  sendNotification( deviceToken:string, completion: {():void} ):void {
-    let apnConfig = new APNCONFIG()
+export function sendNotification( deviceToken:string, completion: {():void} ):void {
 
     let options = {
       token: {
-        key: apnConfig.keyPath,
-        keyId: apnConfig.keyId,
-        teamId: apnConfig.teamId
+        key: APNCONFIG.keyPath,
+        keyId: APNCONFIG.keyId,
+        teamId: APNCONFIG.teamId
       },
       production: false
     }
@@ -33,7 +27,7 @@ export class IOSNotificationSender implements NotificationSender {
       completion()
     })
 
-  }
+
 }
 
 

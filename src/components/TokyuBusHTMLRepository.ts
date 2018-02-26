@@ -1,14 +1,7 @@
 import rp = require('request-promise')
 import cheerioModule = require('cheerio')
 
-
-export interface HTMLRepository {
-  getHTML(): Promise<CheerioSelector>
-}
-
-export class TokyuBusHTMLRepository implements HTMLRepository {
-
-  public getHTML(): Promise<CheerioSelector> {
+export function getHTML(): Promise<CheerioSelector> {
     var options = {
       uri: 'http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1',
       transform: function (body: string) {
@@ -22,6 +15,5 @@ export class TokyuBusHTMLRepository implements HTMLRepository {
           .then((selector: CheerioSelector) => {
               resolve(selector)
           })
-      })
-  }
+    })
 }

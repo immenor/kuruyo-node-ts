@@ -2,12 +2,7 @@ import cheerioModule = require('cheerio')
 import { Stop } from "../components/Stop"
 import { BusLocation } from "../components/BusLocation"
 
-export interface BusLocationFactory {
-  getLeftBusLocations(html: CheerioSelector): BusLocation[]
-}
-
-export class DefaultBusLocationFactory implements BusLocationFactory {
-  getLeftBusLocations(html: CheerioSelector): BusLocation[] {
+export function getLeftBusLocations(html: CheerioSelector): BusLocation[] {
     let leftBusses: BusLocation[] = []
 
     html(".routeListTbl tr")
@@ -21,8 +16,7 @@ export class DefaultBusLocationFactory implements BusLocationFactory {
           leftBusses.push(location)
         }
 
-      })
+    })
 
-    return leftBusses
-  }
+  return leftBusses
 }

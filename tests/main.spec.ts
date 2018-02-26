@@ -1,13 +1,34 @@
 var app = require('../src/main')
 var chai = require('chai'), chaiHttp = require('chai-http')
 chai.use(chaiHttp)
-
 import 'mocha'
+import * as sinon from 'sinon'
 const expect = chai.expect
 
-import { FakeNotificationSender } from "./FakeNotificationSender"
+import * as IOSNotificationSender from "../src/components/IOSNotificationSender"
+import * as TokyuBusHTMLRepository from "../src/components/TokyuBusHTMLRepository"
+import { fakeHtml } from "./TokyuHTMLFixture"
+import { Promise } from 'es6-promise'
 
 describe('Main Express Server', () => {
+
+  let fakeHtmlRepo
+  let fakeSender
+
+  before(function() {
+    const promise = new Promise((resolve,reject) => {
+      resolve(fakeHtml())
+    })
+    fakeHtmlRepo = sinon.stub(TokyuBusHTMLRepository, 'getHTML').returns(promise)
+    fakeSender = sinon.stub(IOSNotificationSender, 'sendNotification').callsFake(function(token, completion) {
+      completion()
+    })
+  })
+
+  after(function() {
+    fakeHtmlRepo.restore()
+    fakeSender.restore()
+  })
 
   it('should respond to a get for all left busses', (done) => {
     let body = {
@@ -20,7 +41,7 @@ describe('Main Express Server', () => {
       .end((err, res) => {
         expect(res).to.have.status(200)
         expect(res.body).to.have.property('stop')
-      done()
+        done()
     })
 
   })
@@ -32,27 +53,24 @@ describe('Main Express Server', () => {
         expect(res).to.have.status(200)
         expect(res).to.be.a('object')
         expect(res.body).to.have.property('busLocations')
-      done()
+        done()
     })
   })
 
-  // Need to inject fake sender so this test doesnt call apn services
-  // it('should recieve a post with a deviceToken', (done) => {
-  //
-  //   let body = {
-  //       "targetStop": "守屋図書館",
-  //       "stopsAway": 3,
-  //       "deviceToken": "123456789"
-  //   }
-  //
-  //   chai.request(app)
-  //     .post('/api/request-notification')
-  //     .send(body)
-  //     .end((err, res) => {
-  //       expect(res).to.have.status(200)
-  //       expect(res.body).to.have.property('targetStop')
-  //       expect(res.body).to.have.property('stopsAway')
-  //       expect(res.body).to.have.property('deviceToken')
-  //   })
-  // })
+  it('should recieve a post with a deviceToken', (done) => {
+
+    let body = {
+        "targetStop": "守屋図書館",
+        "stopsAway": 3,
+        "deviceToken": "123456789"
+    }
+
+    chai.request(app)
+      .post('/api/request-notification')
+      .send(body)
+      .end((err, res) => {
+        expect(res).to.have.status(200)
+        done()
+    })
+  })
 })
