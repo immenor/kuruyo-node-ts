@@ -6,9 +6,13 @@ This is the server which tracks bus data and sends notifications to the client.
 ## Instructions
 
 ### Setup (Mac)
-1. $ brew install node
-2. $ npm install
-3. Create a apn-config.ts file in the root directory with the following:
+1. Make sure Node & NPM are installed, and use npm to install the correct packages.
+```
+$ brew install node
+$ npm install
+```
+2. Create a apn-config.ts file in the root directory with the following:
+
 ```typescript
 export const APNCONFIG = {
   keyPath: "./AuthKey_#######.p8",
@@ -19,13 +23,31 @@ export const APNCONFIG = {
 4. Include your .p8 in your root directory.
 
 ### Running tests
-1. $ npm test
+
+```
+$ npm test
+```
 
 ### Running server
-1. $ npm run build
-2. $ npm start
+
+```
+$ npm run build
+$ npm start
+```
 
 You can also run the server without building.
 This requires the ts-node dev dependency.
 
-1. $ npm run ts-server
+```
+$ npm run ts-server
+```
+
+### Deploying to Cloud Foundry
+This server has a manifest.yml setup for Pivotal Cloud Foundry.
+
+1. Build the app (since only the compiled js will be run), make sure your logged in, and push it up.
+```
+$ npm run build
+$ cf login -a https://api.run.pivotal.io
+$ cf push
+```

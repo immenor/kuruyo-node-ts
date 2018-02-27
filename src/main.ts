@@ -55,4 +55,4 @@ router.post('/request-notification', function (req: express.Request, res: expres
 
 app.use('/api', router)
 module.exports = app
-app.listen(3000, () => console.log('Kuruyo Server listening on port 3000!'))
+app.listen(process.env.PORT || 3000, () => console.log('Kuruyo Server Up & Running'))

@@ -30,9 +30,14 @@
   "scripts": {
     "start": "npm run serve",
     "build": "npm run build-ts",
-    "serve": "node dist/main.js",
+    "serve": "node dist/src/main.js",
+    "build-and-serve": "npm run build; npm start",
     "build-ts": "tsc",
     "ts-server": "ts-node src/main.ts",
     "test": "mocha --require ts-node/register ./tests/*.spec.ts --exit"
+  },
+  "engines": {
+    "node": "8.9.3",
+    "npm": "5.5.1"
   }
 }
