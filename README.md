@@ -42,8 +42,8 @@ This requires the ts-node dev dependency.
 $ npm run ts-server
 ```
 
-### Deploying to Cloud Foundry
-This server has a manifest.yml setup for Pivotal Cloud Foundry.
+### Deploying to Pivotal Web Services
+This server has a manifest.yml setup for Cloud Foundry and can be hosted on Pivotal Web Services.
 
 1. Build the app (since only the compiled js will be run), make sure your logged in, and push it up.
 ```
