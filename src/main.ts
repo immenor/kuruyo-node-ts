@@ -46,7 +46,8 @@ router.post('/request-notification', function (req: express.Request, res: expres
 
   console.log("Checking Bus Location for Target Stop:", targetStop, "For Device:", deviceToken)
 
-  keepCheckingBusLocation(targetStop, 3000, () => {
+  let stop = new Stop(targetStop)
+  keepCheckingBusLocation(stop, 3000, () => {
     sendNotification(deviceToken, function() {
       console.log("Found Bus & Sent Notification To:", deviceToken)
     })
