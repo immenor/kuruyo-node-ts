@@ -44,11 +44,14 @@ router.post('/request-notification', function (req: express.Request, res: expres
   let stopsAway = req.body["stopAway"]
   let deviceToken = req.body["deviceToken"]
 
+  console.log("Checking Bus Location for Target Stop:", targetStop, "For Device:", deviceToken)
+
   keepCheckingBusLocation(targetStop, 3000, () => {
     sendNotification(deviceToken, function() {
-      res.sendStatus(200)
+      console.log("Found Bus & Sent Notification To:", deviceToken)
     })
   })
+  res.sendStatus(200)
 })
 
 // Start Server
