@@ -13,13 +13,12 @@ export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):bo
     return foundMatch
 }
 
-export function keepCheckingBusLocation(stop: Stop, waitTime: number, completion: {():void}) {
-
+export function keepCheckingBusLocation(stopName: string, waitTime: number, completion: {():void}) {
   getHTML().then(function (html) {
     let locations = getLeftBusLocations(html)
-    if (!checkIfBusIsAtStop(stop, locations)) {
+    if (!checkIfBusIsAtStop(new Stop(stopName), locations)) {
       setTimeout(function(){
-        keepCheckingBusLocation(stop, waitTime, completion)
+        keepCheckingBusLocation(stopName, waitTime, completion)
       }, waitTime)
     } else {
       completion()

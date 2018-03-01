@@ -50,7 +50,7 @@ describe('Tokyu Bus Location Checker', () => {
   it('should run completion handler when it finds a matching stop', (done) => {
     var spy = sinon.spy(TokyuBusLocationChecker, "keepCheckingBusLocation")
     let stop = new Stop("2")
-    TokyuBusLocationChecker.keepCheckingBusLocation(stop, 1, () => { done() })
+    TokyuBusLocationChecker.keepCheckingBusLocation(stop.name, 1, () => { done() })
     expect(spy.callCount).to.equal(1)
     spy.restore()
   })
