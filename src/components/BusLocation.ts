@@ -1,4 +1,4 @@
-import { Stop } from "../components/stop"
+import { Stop } from "../components/Stop"
 
 export class BusLocation {
   stop: Stop
