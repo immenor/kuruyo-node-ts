@@ -1,9 +1,9 @@
 import rp = require('request-promise')
 import cheerioModule = require('cheerio')
 
-export function getHTML(): Promise<CheerioSelector> {
+export function getHTML(uri: string): Promise<CheerioSelector> {
     var options = {
-      uri: 'http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1',
+      uri: uri,
       transform: function (body: string) {
         return cheerioModule.load(body)
       }

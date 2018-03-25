@@ -14,7 +14,7 @@ export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):bo
 }
 
 export function keepCheckingBusLocation(stopName: string, waitTime: number, completion: {():void}) {
-  getHTML().then(function (html) {
+  getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
     let locations = getLeftBusLocations(html)
     if (!checkIfBusIsAtStop(new Stop(stopName), locations)) {
       setTimeout(function(){

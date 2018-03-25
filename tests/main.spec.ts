@@ -80,4 +80,18 @@ describe('Main Express Server', () => {
         done()
     })
   })
+
+  it('should send a list of stops for a specific line', (done) => {
+
+    chai.request(app)
+      .get('/api/get-stop-list')
+      .query({line: '恵32'})
+      .end((err, res) => {
+        expect(res).to.have.status(200)
+        expect(res).to.be.a('object')
+        expect(res.body).to.have.property('stops')
+        expect(res.body["stops"].length).to.equal(12)
+        done()
+    })
+  })
 })
