@@ -9,7 +9,7 @@ import { getStops, findStopByScanningDownFromStop } from "./components/DefaultBu
 import { sendNotification } from "./components/IOSNotificationSender"
 import { checkIfBusIsAtStop, keepCheckingBusLocation } from "./components/TokyuBusLocationChecker"
 import { Stop } from "./components/stop"
-import { getAllBuslines, BusLine } from "./components/busLineRepository"
+import { BusLine, getBusline } from "./components/busLineRepository"
 
 // Setup Express
 
@@ -21,48 +21,33 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // API Endpoints
 
 router.get('/left-bus-locations', function(req, res) {
-
   getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
     let locations = getLeftBusLocations(html)
     res.json({ busLocations: locations })
   })
-
 })
 
 router.get('/get-stop-list', function(req, res) {
   let selectedLine: string = req.query["line"]
-  let availableLines = getAllBuslines()
-
-  let selectedLineIndex = availableLines.findIndex((line: BusLine, index: number, obj: BusLine[]): boolean => {
-    if (selectedLine == line.name) {
-      return true
-    } else {
-      return false
-    }
-  })
-
-  let uri = availableLines[selectedLineIndex].uri
-
-  console.log(uri)
+  let busLine = getBusline(selectedLine)
+  let uri = busLine.uri
 
   getHTML(uri).then(function(html) {
-    // get list of all stops
-    //res.json({ stops: locations })
+    let stops = getStops(html)
+    res.json({ stops: stops })
   })
 })
 
 router.post('/target-bus-stop', function (req: express.Request, res: express.Response) {
-
   let targetStop = req.body["stop"]
+
   getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
     let stop = findStopByScanningDownFromStop(3, targetStop, html)
     res.json({ stop: stop })
   })
-
 })
 
 router.post('/request-notification', function (req: express.Request, res: express.Response) {
-
   let targetStop = req.body["targetStop"]
   let stopsAway = req.body["stopAway"]
   let deviceToken = req.body["deviceToken"]

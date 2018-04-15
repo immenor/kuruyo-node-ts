@@ -1,7 +1,21 @@
-export function getAllBuslines(): BusLine[] {
+function getAllBuslines(): BusLine[] {
   return [
     new BusLine("恵32", "http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1")
   ]
+}
+
+export function getBusline(lineName: string): BusLine {
+  let availableLines = getAllBuslines()
+
+  let selectedLineIndex = availableLines.findIndex((line: BusLine, index: number, obj: BusLine[]): boolean => {
+    if (lineName == line.name) {
+      return true
+    } else {
+      return false
+    }
+  })
+
+  return availableLines[selectedLineIndex]
 }
 
 export class BusLine {

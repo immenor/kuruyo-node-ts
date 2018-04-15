@@ -90,7 +90,7 @@ describe('Main Express Server', () => {
         expect(res).to.have.status(200)
         expect(res).to.be.a('object')
         expect(res.body).to.have.property('stops')
-        expect(res.body["stops"].length).to.equal(12)
+        expect(res.body["stops"].length).to.equal(25)
         done()
     })
   })
