@@ -10,6 +10,7 @@ import { sendNotification } from "./components/IOSNotificationSender"
 import { checkIfBusIsAtStop, keepCheckingBusLocation } from "./components/TokyuBusLocationChecker"
 import { Stop } from "./components/stop"
 import { BusLine, getBusline } from "./components/busLineRepository"
+import { BusLocation} from "./components/BusLocation"
 
 // Setup Express
 
@@ -35,6 +36,62 @@ router.get('/get-stop-list', function(req, res) {
   getHTML(uri).then(function(html) {
     let stops = getStops(html)
     res.json({ stops: stops })
+  })
+})
+
+router.get('/closest-bus', function(req, res) {
+  let selectedLine: string = req.query["line"]
+  let busLine = getBusline(selectedLine)
+  let uri = busLine.uri
+
+  let toStopString: string = req.query['toStop']
+  let fromStopString: string = req.query['fromStop']
+
+  getHTML(uri).then(function(html) {
+    let stops = getStops(html)
+    let leftBusLocation = getLeftBusLocations(html)
+    // right locations
+
+    let toStopIndex = stops.findIndex(
+      (stop: Stop) => {
+          return stop.name == toStopString
+      }
+    )
+
+    let fromStopIndex = stops.findIndex(
+      (stop: Stop) => {
+          return stop.name == fromStopString
+      }
+    )
+
+    if (fromStopIndex > toStopIndex) {
+
+      let closestBusIndex = -1
+
+      for (var i = fromStopIndex; i < stops.length; i++) {
+
+        closestBusIndex = leftBusLocation.findIndex(
+          (busLocation: BusLocation) => {
+            return busLocation.stop.name == stops[i].name
+          }
+        )
+
+        if (closestBusIndex > 0) {
+          break
+        }
+      }
+
+      let numberOfStopsAway = fromStopIndex - closestBusIndex
+      let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
+
+      res.json({ busLocation: closestBusStopName , stopsAway: numberOfStopsAway})
+    }
+
+    // } else if (fromStopIndex < toStopIndex) {
+    //   // Right!
+    // }
+
+    // if the from is greater than the to stop, its left, otherwise right
   })
 })
 

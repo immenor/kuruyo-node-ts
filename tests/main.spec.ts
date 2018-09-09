@@ -94,4 +94,19 @@ describe('Main Express Server', () => {
         done()
     })
   })
+
+  it('should send the closest bus location and the number of stops away from your current location', (done) => {
+
+    chai.request(app)
+      .get('/api/closest-bus')
+      .query({line: '恵32', fromStop: '守屋図書館', toStop: '恵比寿駅'})
+      .end((err, res) => {
+        expect(res).to.have.status(200)
+        expect(res).to.be.a('object')
+        expect(res.body['busLocation']).to.equal('深沢不動前（駒沢通り')
+        expect(res.body['stopsAway']).to.equal(5)
+        done()
+    })
+
+  })
 })
