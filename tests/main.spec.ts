@@ -103,8 +103,8 @@ describe('Main Express Server', () => {
       .end((err, res) => {
         expect(res).to.have.status(200)
         expect(res).to.be.a('object')
-        expect(res.body['busLocation']).to.equal('深沢不動前（駒沢通り')
-        expect(res.body['stopsAway']).to.equal(5)
+        expect(res.body['currentBusLocation']['busLocation']).to.equal('深沢不動前（駒沢通り')
+        expect(res.body['currentBusLocation']['stopsAway']).to.equal('5')
         done()
     })
 

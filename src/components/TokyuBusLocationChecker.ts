@@ -23,5 +23,7 @@ export function keepCheckingBusLocation(stopName: string, waitTime: number, comp
     } else {
       completion()
     }
+  }).catch(function(error) {
+    console.log('error getting html', error)
   })
 }

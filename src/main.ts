@@ -25,6 +25,9 @@ router.get('/left-bus-locations', function(req, res) {
   getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
     let locations = getLeftBusLocations(html)
     res.json({ busLocations: locations })
+  }).catch(function(error) {
+    console.log('error getting html', error)
+    res.status(500).send('error getting scraping html')
   })
 })
 
@@ -36,6 +39,9 @@ router.get('/get-stop-list', function(req, res) {
   getHTML(uri).then(function(html) {
     let stops = getStops(html)
     res.json({ stops: stops })
+  }).catch(function(error) {
+    console.log('error getting html', error)
+    res.status(500).send('error getting scraping html')
   })
 })
 
@@ -84,14 +90,16 @@ router.get('/closest-bus', function(req, res) {
       let numberOfStopsAway = fromStopIndex - closestBusIndex
       let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
 
-      res.json({ busLocation: closestBusStopName , stopsAway: numberOfStopsAway})
+      res.json({
+        currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
+      })
+    } else {
+      res.json({})
     }
 
-    // } else if (fromStopIndex < toStopIndex) {
-    //   // Right!
-    // }
-
-    // if the from is greater than the to stop, its left, otherwise right
+  }).catch(function(error) {
+    console.log('error getting html', error)
+    res.status(500).send('error getting scraping html')
   })
 })
 
@@ -101,6 +109,9 @@ router.post('/target-bus-stop', function (req: express.Request, res: express.Res
   getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
     let stop = findStopByScanningDownFromStop(3, targetStop, html)
     res.json({ stop: stop })
+  }).catch(function(error) {
+    console.log('error getting html', error)
+    res.status(500).send('error getting scraping html')
   })
 })
 
