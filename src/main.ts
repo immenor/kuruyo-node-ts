@@ -4,7 +4,7 @@ import express = require('express')
 import bodyParser = require('body-parser')
 
 import { getHTML } from "./components/TokyuBusHTMLRepository"
-import { getLeftBusLocations } from "./components/DefaultBusLocationFactory"
+import { getLeftBusLocations, getRightBusLocations } from "./components/DefaultBusLocationFactory"
 import { getStops, findStopByScanningDownFromStop } from "./components/DefaultBusFactory"
 import { sendNotification } from "./components/IOSNotificationSender"
 import { checkIfBusIsAtStop, keepCheckingBusLocation } from "./components/TokyuBusLocationChecker"
@@ -56,6 +56,7 @@ router.get('/closest-bus', function(req, res) {
   getHTML(uri).then(function(html) {
     let stops = getStops(html)
     let leftBusLocation = getLeftBusLocations(html)
+    let rightBusLocation = getRightBusLocations(html)
     // right locations
 
     let toStopIndex = stops.findIndex(
@@ -94,7 +95,33 @@ router.get('/closest-bus', function(req, res) {
         currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
       })
     } else {
-      res.json({})
+
+      let closestBusIndex = -1
+      let i = fromStopIndex
+      while(i--) {
+
+        closestBusIndex = rightBusLocation.findIndex(
+          (busLocation: BusLocation) => {
+            return busLocation.stop.name == stops[i].name
+          }
+        )
+
+        if (closestBusIndex > 0) {
+          break
+        }
+      }
+
+  let closestBusStopName = rightBusLocation[closestBusIndex].stop.name
+      let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
+        return stop.name == closestBusStopName
+      })
+
+      let range = stops.slice(indexOfClosestStopInMainArray, fromStopIndex)
+      let numberOfStopsAway = range.length
+
+      res.json({
+        currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
+      })
     }
 
   }).catch(function(error) {
