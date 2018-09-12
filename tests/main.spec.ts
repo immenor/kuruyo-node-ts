@@ -160,7 +160,7 @@ describe('Main Express Server', () => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
           expect(res.body['currentBusLocation']['busLocation']).to.equal('用賀駅')
-          expect(res.body['currentBusLocation']['stopsAway']).to.equal('0')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('15')
           done()
       })
     })
@@ -174,12 +174,12 @@ describe('Main Express Server', () => {
 
       chai.request(app)
         .get('/api/closest-bus')
-        .query({line: '恵32', fromStop: '用賀駅', toStop: '学芸附属中学校'})
+        .query({line: '恵32', fromStop: '用賀神社前', toStop: '学芸附属中学校'})
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
           expect(res.body['currentBusLocation']['busLocation']).to.equal('恵比寿駅')
-          expect(res.body['currentBusLocation']['stopsAway']).to.equal('0')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('1')
           done()
       })
     })
