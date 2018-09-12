@@ -8,7 +8,7 @@ const expect = chai.expect
 import * as IOSNotificationSender from "../src/components/IOSNotificationSender"
 import * as TokyuBusHTMLRepository from "../src/components/TokyuBusHTMLRepository"
 import * as TokyuBusLocationChecker from "../src/components/TokyuBusLocationChecker"
-import { fakeHtml } from "./TokyuHTMLFixture"
+import { fakeHtml, fakeHtmlNoBuses } from "./TokyuHTMLFixture"
 import { Promise } from 'es6-promise'
 
 describe('Main Express Server', () => {
@@ -16,6 +16,30 @@ describe('Main Express Server', () => {
   let fakeHtmlRepo
   let fakeSender
   let fakeLocationChecker
+
+  const prepareFakeHtml = function() {
+    const promise = new Promise((resolve,reject) => {
+      resolve(fakeHtml())
+    })
+    fakeHtmlRepo = sinon.stub(TokyuBusHTMLRepository, 'getHTML').returns(promise)
+  }
+
+  const prepareFakeHtmlWithNoBuses = function() {
+    const promise = new Promise((resolve,reject) => {
+      resolve(fakeHtmlNoBuses())
+    })
+    fakeHtmlRepo = sinon.stub(TokyuBusHTMLRepository, 'getHTML').returns(promise)
+  }
+
+  const setupDependencies = function() {
+    fakeSender = sinon.stub(IOSNotificationSender, 'sendNotification').callsFake(function(token, completion) {
+      completion()
+    })
+    fakeLocationChecker = sinon.stub(TokyuBusLocationChecker, 'keepCheckingBusLocation')
+    .callsFake(function(stop, time, completion){
+      completion()
+    })
+  }
 
   before(function() {
     const promise = new Promise((resolve,reject) => {
@@ -118,6 +142,44 @@ describe('Main Express Server', () => {
           expect(res).to.be.a('object')
           expect(res.body['currentBusLocation']['busLocation']).to.equal('五本木')
           expect(res.body['currentBusLocation']['stopsAway']).to.equal('8')
+          done()
+      })
+    })
+
+    it('should send the root station when there is no closest left bus', (done) => {
+      fakeHtmlRepo.restore()
+      const promise = new Promise((resolve,reject) => {
+        resolve(fakeHtmlNoBuses())
+      })
+      fakeHtmlRepo = sinon.stub(TokyuBusHTMLRepository, 'getHTML').returns(promise)
+
+      chai.request(app)
+        .get('/api/closest-bus')
+        .query({line: '恵32', fromStop: '学芸附属中学校', toStop: '用賀駅'})
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res).to.be.a('object')
+          expect(res.body['currentBusLocation']['busLocation']).to.equal('用賀駅')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('0')
+          done()
+      })
+    })
+
+    it('should send the root station when there is no closest right bus', (done) => {
+      fakeHtmlRepo.restore()
+      const promise = new Promise((resolve,reject) => {
+        resolve(fakeHtmlNoBuses())
+      })
+      fakeHtmlRepo = sinon.stub(TokyuBusHTMLRepository, 'getHTML').returns(promise)
+
+      chai.request(app)
+        .get('/api/closest-bus')
+        .query({line: '恵32', fromStop: '用賀駅', toStop: '学芸附属中学校'})
+        .end((err, res) => {
+          expect(res).to.have.status(200)
+          expect(res).to.be.a('object')
+          expect(res.body['currentBusLocation']['busLocation']).to.equal('恵比寿駅')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('0')
           done()
       })
     })

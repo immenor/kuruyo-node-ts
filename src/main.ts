@@ -88,12 +88,18 @@ router.get('/closest-bus', function(req, res) {
         }
       }
 
-      let numberOfStopsAway = fromStopIndex - closestBusIndex
-      let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
+      if (closestBusIndex != -1) {
+        let numberOfStopsAway = fromStopIndex - closestBusIndex
+        let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
 
-      res.json({
-        currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
-      })
+        res.json({
+          currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
+        })
+      } else {
+        res.json({
+          currentBusLocation: { busLocation: stops[0].name , stopsAway: "0"}
+        })
+      }
     } else {
 
       let closestBusIndex = -1
@@ -111,17 +117,23 @@ router.get('/closest-bus', function(req, res) {
         }
       }
 
-  let closestBusStopName = rightBusLocation[closestBusIndex].stop.name
-      let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
-        return stop.name == closestBusStopName
-      })
+      if (closestBusIndex != -1) {
+        let closestBusStopName = rightBusLocation[closestBusIndex].stop.name
+        let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
+          return stop.name == closestBusStopName
+        })
 
-      let range = stops.slice(indexOfClosestStopInMainArray, fromStopIndex)
-      let numberOfStopsAway = range.length
+        let range = stops.slice(indexOfClosestStopInMainArray, fromStopIndex)
+        let numberOfStopsAway = range.length
 
-      res.json({
-        currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
-      })
+        res.json({
+          currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
+        })
+      } else {
+        res.json({
+          currentBusLocation: { busLocation: stops[stops.length - 1].name , stopsAway: "0"}
+        })
+      }
     }
 
   }).catch(function(error) {
