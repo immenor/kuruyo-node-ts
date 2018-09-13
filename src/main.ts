@@ -89,16 +89,20 @@ router.get('/closest-bus', function(req, res) {
       }
 
       if (closestBusIndex != -1) {
-        let numberOfStopsAway = fromStopIndex - closestBusIndex
         let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
+        let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
+          return stop.name == closestBusStopName
+        })
+        let numberOfStopsAway = indexOfClosestStopInMainArray - fromStopIndex
 
         res.json({
           currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
         })
       } else {
         let stopsAway = stops.length - (fromStopIndex + 1)
+
         res.json({
-          currentBusLocation: { busLocation: stops[0].name , stopsAway: String(stopsAway)}
+          currentBusLocation: { busLocation: stops[stops.length - 1].name , stopsAway: String(stopsAway)}
         })
       }
     } else {
@@ -132,8 +136,9 @@ router.get('/closest-bus', function(req, res) {
         })
       } else {
         let stopsAway = fromStopIndex
+
         res.json({
-          currentBusLocation: { busLocation: stops[stops.length - 1].name , stopsAway: String(stopsAway)}
+          currentBusLocation: { busLocation: stops[0].name , stopsAway: String(stopsAway)}
         })
       }
     }

@@ -128,7 +128,7 @@ describe('Main Express Server', () => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
           expect(res.body['currentBusLocation']['busLocation']).to.equal('深沢不動前（駒沢通り')
-          expect(res.body['currentBusLocation']['stopsAway']).to.equal('5')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('11')
           done()
       })
     })
@@ -159,7 +159,7 @@ describe('Main Express Server', () => {
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
-          expect(res.body['currentBusLocation']['busLocation']).to.equal('用賀駅')
+          expect(res.body['currentBusLocation']['busLocation']).to.equal('恵比寿駅')
           expect(res.body['currentBusLocation']['stopsAway']).to.equal('15')
           done()
       })
@@ -178,7 +178,7 @@ describe('Main Express Server', () => {
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
-          expect(res.body['currentBusLocation']['busLocation']).to.equal('恵比寿駅')
+          expect(res.body['currentBusLocation']['busLocation']).to.equal('用賀駅')
           expect(res.body['currentBusLocation']['stopsAway']).to.equal('1')
           done()
       })
