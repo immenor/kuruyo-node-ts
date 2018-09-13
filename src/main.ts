@@ -7,7 +7,7 @@ import { getHTML } from "./components/TokyuBusHTMLRepository"
 import { getLeftBusLocations, getRightBusLocations } from "./components/DefaultBusLocationFactory"
 import { getStops, findStopByScanningDownFromStop } from "./components/DefaultBusFactory"
 import { sendNotification } from "./components/IOSNotificationSender"
-import { checkIfBusIsAtStop, keepCheckingBusLocation } from "./components/TokyuBusLocationChecker"
+import { checkIfBusIsAtStop, keepCheckingBusLocation, checkBusDirection, BusDirection, findClosestLeftBusIndex, findClosestRightBusIndex, numberOfStopsAway, closestRightBusStopName, closestLeftBusStopName } from "./components/TokyuBusLocationChecker"
 import { Stop } from "./components/stop"
 import { BusLine, getBusline } from "./components/busLineRepository"
 import { BusLocation} from "./components/BusLocation"
@@ -57,91 +57,24 @@ router.get('/closest-bus', function(req, res) {
     let stops = getStops(html)
     let leftBusLocation = getLeftBusLocations(html)
     let rightBusLocation = getRightBusLocations(html)
-    // right locations
+    let busDirection = checkBusDirection(fromStopString, toStopString, stops)
 
-    let toStopIndex = stops.findIndex(
-      (stop: Stop) => {
-          return stop.name == toStopString
-      }
-    )
+    let closestBusStopName: string
+    let stopsAway: number
 
-    let fromStopIndex = stops.findIndex(
-      (stop: Stop) => {
-          return stop.name == fromStopString
-      }
-    )
-
-    if (fromStopIndex > toStopIndex) {
-
-      let closestBusIndex = -1
-
-      for (var i = fromStopIndex; i < stops.length; i++) {
-
-        closestBusIndex = leftBusLocation.findIndex(
-          (busLocation: BusLocation) => {
-            return busLocation.stop.name == stops[i].name
-          }
-        )
-
-        if (closestBusIndex > 0) {
-          break
-        }
-      }
-
-      if (closestBusIndex != -1) {
-        let closestBusStopName = leftBusLocation[closestBusIndex].stop.name
-        let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
-          return stop.name == closestBusStopName
-        })
-        let numberOfStopsAway = indexOfClosestStopInMainArray - fromStopIndex
-
-        res.json({
-          currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
-        })
-      } else {
-        let stopsAway = stops.length - (fromStopIndex + 1)
-
-        res.json({
-          currentBusLocation: { busLocation: stops[stops.length - 1].name , stopsAway: String(stopsAway)}
-        })
-      }
+    if (busDirection == BusDirection.Left) {
+      let closestBusIndex = findClosestLeftBusIndex(leftBusLocation, fromStopString, stops)
+      closestBusStopName = closestLeftBusStopName(leftBusLocation, fromStopString, closestBusIndex, stops)
+      stopsAway = numberOfStopsAway(busDirection, fromStopString, closestBusStopName, stops)
     } else {
-
-      let closestBusIndex = -1
-      let i = fromStopIndex
-      while(i--) {
-
-        closestBusIndex = rightBusLocation.findIndex(
-          (busLocation: BusLocation) => {
-            return busLocation.stop.name == stops[i].name
-          }
-        )
-
-        if (closestBusIndex > 0) {
-          break
-        }
-      }
-
-      if (closestBusIndex != -1) {
-        let closestBusStopName = rightBusLocation[closestBusIndex].stop.name
-        let indexOfClosestStopInMainArray = stops.findIndex((stop: Stop) => {
-          return stop.name == closestBusStopName
-        })
-
-        let range = stops.slice(indexOfClosestStopInMainArray, fromStopIndex)
-        let numberOfStopsAway = range.length
-
-        res.json({
-          currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(numberOfStopsAway)}
-        })
-      } else {
-        let stopsAway = fromStopIndex
-
-        res.json({
-          currentBusLocation: { busLocation: stops[0].name , stopsAway: String(stopsAway)}
-        })
-      }
+      let closestBusIndex = findClosestRightBusIndex(rightBusLocation, fromStopString, stops)
+      closestBusStopName = closestRightBusStopName(rightBusLocation, fromStopString, closestBusIndex, stops)
+      stopsAway = numberOfStopsAway(busDirection, fromStopString, closestBusStopName, stops)
     }
+
+    res.json({
+      currentBusLocation: { busLocation: closestBusStopName , stopsAway: String(stopsAway)}
+    })
 
   }).catch(function(error) {
     console.log('error getting html', error)
