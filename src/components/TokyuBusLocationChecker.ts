@@ -74,14 +74,14 @@ export function findClosestLeftBusIndex(leftBuses: BusLocation[], fromStop: stri
     let fromStopIndex = indexForStop(fromStop, allStops)
 
     for (var i = fromStopIndex; i < allStops.length; i++) {
-
+      
       closestBusIndex = leftBuses.findIndex(
         (busLocation: BusLocation) => {
           return busLocation.stop.name == allStops[i].name
         }
       )
 
-      if (closestBusIndex > 0) {
+      if (closestBusIndex !== -1) {
         break
       }
     }
@@ -101,7 +101,7 @@ export function findClosestRightBusIndex(rightBuses: BusLocation[], fromStop: st
         }
       )
 
-      if (closestBusIndex > 0) {
+      if (closestBusIndex !== -1) {
         break
       }
     }

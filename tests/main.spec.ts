@@ -122,12 +122,12 @@ describe('Main Express Server', () => {
     it('should send the stop and number of stops away for left buses', (done) => {
       chai.request(app)
         .get('/api/closest-bus')
-        .query({line: '恵32', fromStop: '守屋図書館', toStop: '恵比寿駅'})
+        .query({line: '恵32', fromStop: 'けこぼ坂上', toStop: '恵比寿駅'})
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
-          expect(res.body['currentBusLocation']['busLocation']).to.equal('深沢不動前（駒沢通り')
-          expect(res.body['currentBusLocation']['stopsAway']).to.equal('11')
+          expect(res.body['currentBusLocation']['busLocation']).to.equal('三谷')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('4')
           done()
       })
     })
@@ -135,12 +135,12 @@ describe('Main Express Server', () => {
     it('should send the stop and number of stops away for right buses', (done) => {
       chai.request(app)
         .get('/api/closest-bus')
-        .query({line: '恵32', fromStop: '学芸附属中学校', toStop: '用賀駅'})
+        .query({line: '恵32', fromStop: '碑文谷呑川', toStop: '学芸附属中学校'})
         .end((err, res) => {
           expect(res).to.have.status(200)
           expect(res).to.be.a('object')
           expect(res.body['currentBusLocation']['busLocation']).to.equal('五本木')
-          expect(res.body['currentBusLocation']['stopsAway']).to.equal('8')
+          expect(res.body['currentBusLocation']['stopsAway']).to.equal('3')
           done()
       })
     })
