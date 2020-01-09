@@ -36,7 +36,7 @@ describe('Main Express Server', () => {
       completion()
     })
     fakeLocationChecker = sinon.stub(TokyuBusLocationChecker, 'keepCheckingBusLocation')
-    .callsFake(function(stop, time, completion){
+    .callsFake(function(uri, direction, stop, time, completion) {
       completion()
     })
   }
@@ -50,7 +50,7 @@ describe('Main Express Server', () => {
       completion()
     })
     fakeLocationChecker = sinon.stub(TokyuBusLocationChecker, 'keepCheckingBusLocation')
-    .callsFake(function(stop, time, completion){
+    .callsFake(function(uri, directions, stop, time, completion) {
       completion()
     })
   })
@@ -61,25 +61,22 @@ describe('Main Express Server', () => {
     fakeLocationChecker.restore()
   })
 
-  it('should respond to a get for all left busses', (done) => {
-    let body = {
-      stop: "守屋図書館"
-    }
-
+  it('should get left bus locations for 恵32', (done) => {
     chai.request(app)
-      .post('/api/target-bus-stop')
-      .send(body)
+      .get('/api/bus-locations')
+      .query({line: '恵32', direction: 'left'})
       .end((err, res) => {
         expect(res).to.have.status(200)
-        expect(res.body).to.have.property('stop')
+        expect(res).to.be.a('object')
+        expect(res.body).to.have.property('busLocations')
         done()
     })
-
   })
 
-  it('should get left bus locations', (done) => {
+  it('should get right bus locations for 恵32', (done) => {
     chai.request(app)
-      .get('/api/left-bus-locations')
+      .get('/api/bus-locations')
+      .query({line: '恵32', direction: 'right'})
       .end((err, res) => {
         expect(res).to.have.status(200)
         expect(res).to.be.a('object')
@@ -91,6 +88,8 @@ describe('Main Express Server', () => {
   it('should recieve a post with a deviceToken', (done) => {
 
     let body = {
+        "line": "恵32",
+        "direction": "left",
         "targetStop": "守屋図書館",
         "stopsAway": 3,
         "deviceToken": "123456789"

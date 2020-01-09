@@ -9,6 +9,8 @@ import * as TokyuBusHTMLRepository from "../src/components/TokyuBusHTMLRepositor
 import * as DefaultBusLocationFactory from "../src/components/DefaultBusLocationFactory"
 import { fakeHtml } from "./TokyuHTMLFixture"
 import { Promise } from 'es6-promise'
+import { BusLine, getBusline } from "../src/components/busLineRepository"
+import { BusDirection } from "../src/components/TokyuBusLocationChecker"
 
 describe('Tokyu Bus Location Checker', () => {
 
@@ -47,10 +49,12 @@ describe('Tokyu Bus Location Checker', () => {
 
   })
 
-  it('should run completion handler when it finds a matching stop', (done) => {
+  it('should run completion handler when it finds a matching stop on the left side', (done) => {
     var spy = sinon.spy(TokyuBusLocationChecker, "keepCheckingBusLocation")
     let stop = new Stop("2")
-    TokyuBusLocationChecker.keepCheckingBusLocation(stop.name, 1, () => { done() })
+    let busLine = getBusline("恵32")
+
+    TokyuBusLocationChecker.keepCheckingBusLocation(busLine.uri, BusDirection.Left, stop.name, 1, () => { done() })
     expect(spy.callCount).to.equal(1)
     spy.restore()
   })

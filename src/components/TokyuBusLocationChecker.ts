@@ -1,11 +1,20 @@
 import{ Stop } from "./Stop"
 import { BusLocation } from "./BusLocation"
 import { getHTML } from "./TokyuBusHTMLRepository"
-import { getLeftBusLocations } from "./DefaultBusLocationFactory"
+import { getLeftBusLocations, getRightBusLocations } from "./DefaultBusLocationFactory"
+import { BusLine } from "./busLineRepository"
 
 export enum BusDirection {
   Left = 0,
   Right,
+}
+
+export function busDirectionForString(direction: string):BusDirection {
+  if (direction == "left") {
+    return BusDirection.Left
+  }
+
+  return BusDirection.Right
 }
 
 export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):boolean {
@@ -18,12 +27,20 @@ export function checkIfBusIsAtStop( stop: Stop, buslocations: BusLocation[] ):bo
     return foundMatch
 }
 
-export function keepCheckingBusLocation(stopName: string, waitTime: number, completion: {():void}) {
-  getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
-    let locations = getLeftBusLocations(html)
+export function keepCheckingBusLocation(
+  lineUri: string,
+  direction: BusDirection,
+  stopName: string,
+  waitTime: number,
+  completion: {():void}
+) {
+
+  getHTML(lineUri).then(function (html) {
+    let locations = direction == BusDirection.Left ? getLeftBusLocations(html) : getRightBusLocations(html)
+    
     if (!checkIfBusIsAtStop(new Stop(stopName), locations)) {
-      setTimeout(function(){
-        keepCheckingBusLocation(stopName, waitTime, completion)
+      setTimeout(function() {
+        keepCheckingBusLocation(lineUri, direction, stopName, waitTime, completion)
       }, waitTime)
     } else {
       completion()

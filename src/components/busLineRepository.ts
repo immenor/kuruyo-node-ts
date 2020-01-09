@@ -1,6 +1,7 @@
 function getAllBuslines(): BusLine[] {
   return [
-    new BusLine("恵32", "http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1")
+    new BusLine("恵32", "http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1"),
+    new BusLine("玉11", "http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=55&SCT=1")
   ]
 }
 

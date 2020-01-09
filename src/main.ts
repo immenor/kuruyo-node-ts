@@ -7,7 +7,7 @@ import { getHTML } from "./components/TokyuBusHTMLRepository"
 import { getLeftBusLocations, getRightBusLocations } from "./components/DefaultBusLocationFactory"
 import { getStops, findStopByScanningDownFromStop } from "./components/DefaultBusFactory"
 import { sendNotification } from "./components/IOSNotificationSender"
-import { checkIfBusIsAtStop, keepCheckingBusLocation, checkBusDirection, BusDirection, findClosestLeftBusIndex, findClosestRightBusIndex, numberOfStopsAway, closestRightBusStopName, closestLeftBusStopName } from "./components/TokyuBusLocationChecker"
+import { checkIfBusIsAtStop, keepCheckingBusLocation, checkBusDirection, BusDirection, findClosestLeftBusIndex, findClosestRightBusIndex, numberOfStopsAway, closestRightBusStopName, closestLeftBusStopName, busDirectionForString } from "./components/TokyuBusLocationChecker"
 import { Stop } from "./components/stop"
 import { BusLine, getBusline } from "./components/busLineRepository"
 import { BusLocation} from "./components/BusLocation"
@@ -21,9 +21,16 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // API Endpoints
 
-router.get('/left-bus-locations', function(req, res) {
-  getHTML("http://tokyu.bus-location.jp/blsys/navi?VID=rtl&EID=nt&PRM=&RAMK=116&SCT=1").then(function (html) {
-    let locations = getLeftBusLocations(html)
+router.get('/bus-locations', function(req, res) {
+  let selectedLine: string = req.query["line"]
+  let busLine = getBusline(selectedLine)
+  let uri = busLine.uri
+
+  let directionQueryString: string = req.query["direction"]
+  let direction = busDirectionForString(directionQueryString)
+
+  getHTML(uri).then(function (html) {
+    let locations = direction == BusDirection.Left ? getLeftBusLocations(html) : getRightBusLocations(html)
     res.json({ busLocations: locations })
   }).catch(function(error) {
     console.log('error getting html', error)
@@ -95,13 +102,18 @@ router.post('/target-bus-stop', function (req: express.Request, res: express.Res
 })
 
 router.post('/request-notification', function (req: express.Request, res: express.Response) {
+  let lineQuery = req.body["line"]
+  let busLine = getBusline(lineQuery)
+  let uri = busLine.uri
+  let directionQuery = req.body["direction"]
+  let direction = busDirectionForString(directionQuery)
   let targetStop = req.body["targetStop"]
   let stopsAway = req.body["stopAway"]
   let deviceToken = req.body["deviceToken"]
 
   console.log("Checking Bus Location for Target Stop:", targetStop, "For Device:", deviceToken)
 
-  keepCheckingBusLocation(targetStop, 3000, () => {
+  keepCheckingBusLocation(uri, direction, targetStop, 3000, () => {
     sendNotification(deviceToken, function() {
       console.log("Found Bus & Sent Notification To:", deviceToken)
     })
